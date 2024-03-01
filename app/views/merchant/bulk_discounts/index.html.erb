@@ -1,8 +1,11 @@
 <h1>Discounts for <%= @merchant.name %></h1>
 
-<h3>Discounts:</h3>
-<% @merchant.bulk_discounts.each do |discount| %>
-  <div id="discount-<%= discount.id %>">
-    <p><%= discount.discount%>% - For orders <%= discount.quantity%> or above! <%= link_to 'I Want a Discount',  merchant_bulk_discount_path(@merchant, discount.id) %></p>
-  </div>
-<% end %>
+<section id="discounts">
+  <h3>Discounts:</h3>
+  <% @merchant.bulk_discounts.each do |discount| %>
+    <div id="discount-<%= discount.id %>">
+      <p><%= discount.discount%>% - For orders <%= discount.quantity%> or above! <%= link_to 'I Want a Discount',  merchant_bulk_discount_path(@merchant, discount.id) %></p>
+    </div>
+  <% end %>
+  <%= link_to 'Create A New Discount', new_merchant_bulk_discount_path(@merchant) %>
+</section>
