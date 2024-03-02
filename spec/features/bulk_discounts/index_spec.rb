@@ -3,9 +3,9 @@ require 'rails_helper'
 RSpec.describe 'Index Page', type: :feature do
   describe "As a Merchant" do
     before(:each) do
-    @merchant_1 = Merchant.create!(name: "Barry")
-    @discount_1 = @merchant_1.bulk_discounts.create!(discount: 10, quantity: 5)
-    @discount_2 = @merchant_1.bulk_discounts.create!(discount: 9, quantity: 3)
+      @merchant_1 = Merchant.create!(name: "Barry")
+      @discount_1 = @merchant_1.bulk_discounts.create!(discount: 10, quantity: 5)
+      @discount_2 = @merchant_1.bulk_discounts.create!(discount: 9, quantity: 3)
     end
 
     describe "Us-1 Merchant Bulk Discounts Index" do 
