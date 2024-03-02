@@ -5,6 +5,7 @@ RSpec.describe 'Index Page', type: :feature do
     before(:each) do
     @merchant_1 = Merchant.create!(name: "Barry")
     @discount_1 = @merchant_1.bulk_discounts.create!(discount: 10, quantity: 5)
+    @discount_2 = @merchant_1.bulk_discounts.create!(discount: 9, quantity: 3)
     end
 
     describe "Us-1 Merchant Bulk Discounts Index" do 
@@ -34,6 +35,24 @@ RSpec.describe 'Index Page', type: :feature do
         click_on("Create A New Discount")
         expect(current_path).to eq(new_merchant_bulk_discount_path(@merchant_1))
       end 
+    end
+
+    describe "US-3 Merchant Bulk Discount Delete" do 
+      it "deletes a discount for a merchant" do 
+      # When I visit my bulk discounts index
+      visit merchant_bulk_discounts_path(@merchant_1)
+      # Then next to each bulk discount I see a button to delete it
+      expect(page).to have_button("Delete")
+      # When I click this button
+      within "#discount-#{@discount_2.id}" do
+        click_button("Delete")
+        expect(current_path).to eq(merchant_bulk_discounts_path(@merchant_1))
+      end
+      # Then I am redirected back to the bulk discounts index page
+      # And I no longer see the discount listed
+      expect(page).not_to have_content("9%")
+      expect(page).not_to have_content("For orders 3 or above!")
+      end
     end
   end
 end
