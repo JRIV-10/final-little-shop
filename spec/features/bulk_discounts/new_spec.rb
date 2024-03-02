@@ -29,7 +29,6 @@ RSpec.describe 'New Page', type: :feature do
         expect(page).to have_content("Succesfully Created a New Discount")
         # And I see my new bulk discount listed
         within '#discounts' do
-        save_and_open_page
           expect(page).to have_content(20)
           expect(page).to have_content(12)
         end
