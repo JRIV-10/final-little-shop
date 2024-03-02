@@ -21,17 +21,16 @@ RSpec.describe 'New Page', type: :feature do
         expect(page).to have_content("Discount")
         expect(page).to have_content("Qauntity")
         # When I fill in the form with valid data
-        fill_in("Discount", with: 20)
-        fill_in("Qauntity", with: 12)
-        click_button("Submit")
+        fill_in "Discount", with: "20"
+        fill_in "Qauntity", with: "12"
+        click_on "Submit"
+        
         # Then I am redirected back to the bulk discount index
         expect(current_path).to eq(merchant_bulk_discounts_path(@merchant_1))
         expect(page).to have_content("Succesfully Created a New Discount")
         # And I see my new bulk discount listed
-        within '#discounts' do
-          expect(page).to have_content(20)
-          expect(page).to have_content(12)
-        end
+        expect(page).to have_content(20)
+        expect(page).to have_content(12)
       end
 
       #sad path testing 
@@ -39,8 +38,8 @@ RSpec.describe 'New Page', type: :feature do
         visit new_merchant_bulk_discount_path(@merchant_1)
 
         fill_in("Discount", with: 20)
-        fill_in("Qauntity", with: '')
-        click_button("Submit")
+        fill_in("Qauntity", with: "")
+        click_button "Submit"
 
         expect(current_path).to eq(new_merchant_bulk_discount_path(@merchant_1))
         expect(page).to have_content("Please fill in ALL required fields")

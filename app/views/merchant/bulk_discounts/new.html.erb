@@ -1,7 +1,7 @@
-<%= form_with url: merchant_bulk_discounts_path(@merchant), method: :post, local: true, data: {turbo: false} do |form|%>
+<%= form_with model: @bulk_discount, url: merchant_bulk_discounts_path(@merchant), method: :post, local: true, data: {turbo: false} do |form|%>
   <%= form.label :discount, "Discount" %>
   <%= form.number_field :discount %><br>
   <%= form.label :quantity, "Qauntity" %>
   <%= form.number_field :quantity %><br>
-  <%= form.submit "Submit"%>
+  <%= form.submit "Submit" %>
 <% end %>

@@ -17,5 +17,18 @@ RSpec.describe 'Show Page', type: :feature do
         expect(page).to have_content(@discount_1.quantity)
       end
     end
+
+    describe "US-5 Merchant Bulk Discount Edit" do
+      it "has a button to edit the discount" do 
+        # When I visit my bulk discount show page
+        visit merchant_bulk_discount_path(@merchant_1, @discount_1)
+        # Then I see a link to edit the bulk discount
+        expect(page).to have_content("Edit Discount")
+        # When I click this link
+        click_button("Edit Discount")
+        # Then I am taken to a new page with a form to edit the discount
+        expect(current_path).to eq(edit_merchant_bulk_discount_path(@merchant_1, @discount_1))
+      end
+    end
   end
 end
