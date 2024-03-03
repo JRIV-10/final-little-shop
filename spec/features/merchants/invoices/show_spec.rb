@@ -121,4 +121,27 @@ RSpec.describe 'Merchant Invoices Show Page', type: :feature do
       end
     end
   end
+  describe "US-6 Merchant Invoice Show Page: Total Revenue and Discounted Revenue" do 
+    it "displays the discounted revenue" do 
+      yain = Customer.create!(first_name: "Yain", last_name: "Porter")
+      abdul = Customer.create!(first_name: "Abdul", last_name: "R")
+
+      merchant = Merchant.create!(name: "Barry")
+      item_1 = create(:item, name: "book", merchant: merchant)
+      item_2 = create(:item, name: "belt", merchant: merchant)
+      invoice_1 = Invoice.create!(customer_id: yain.id, status: 1, created_at: "2011-09-13")
+
+      invoice_item_1 = InvoiceItem.create!(item_id: item_1.id, invoice_id: invoice_1.id, quantity: 1, unit_price: 2500, status: 0) # pending
+      invoice_item_2 = InvoiceItem.create!(item_id: item_2.id, invoice_id: invoice_1.id, quantity: 2, unit_price: 1000, status: 1) # packaged
+      invoice_item_3 = InvoiceItem.create!(item_id: item_2.id, invoice_id: invoice_1.id, quantity: 6, unit_price: 1000, status: 1) # package
+
+      discount = merchant.bulk_discounts.create!(discount: 20, quantity: 5)
+      # When I visit my merchant invoice show page
+      visit merchant_invoice_path(merchant, invoice_1)
+      # Then I see the total revenue for my merchant from this invoice (not including discounts)
+      expect(page).to have_content("Total Revenue: $105.00")
+      # And I see the total discounted revenue for my merchant from this invoice which includes bulk discounts in the calculation
+      expect(page).to have_content("Discounted Revenue: $93")
+    end
+  end
 end

@@ -68,6 +68,8 @@ RSpec.describe Invoice, type: :model do
       @invoice_item_1 = InvoiceItem.create!(item_id: @item_1.id, invoice_id: @invoice_1.id, quantity: 1, unit_price: 2500, status: 0)
       @invoice_item_2 = InvoiceItem.create!(item_id: @item_2.id, invoice_id: @invoice_1.id, quantity: 2, unit_price: 1000, status: 1)
       @invoice_item_3 = InvoiceItem.create!(item_id: @item_3.id, invoice_id: @invoice_1.id, quantity: 3, unit_price: 5000, status: 2)
+
+      @bulk_discount_1 = @merchant_1.bulk_discounts.create!(discount: 10, quantity: 3)
     end
 
     describe "#format_date_created"
@@ -80,6 +82,22 @@ RSpec.describe Invoice, type: :model do
       it "calculates an invoice's total revenue" do
         expect(@invoice_1.total_revenue).to eq(19500)
       end
+    end
+
+  end
+
+  describe "#discounted_revenue" do 
+    it "calculates the total revenue - discounted revenue" do 
+      merchant = Merchant.create!(name: "This sucks")
+      discount = merchant.bulk_discounts.create!(discount: 20, quantity: 10)
+      item = Item.create!(name: "Hope this works", description: "My brain does not work", unit_price: 1000, merchant_id: merchant.id, status: 1)
+      item_2 = Item.create!(name: "Happy thoughts", description: "High Hopes", unit_price: 40, merchant_id: merchant.id)
+      customer = Customer.create!(first_name: 'Please', last_name: 'Work')
+      invoice_1 = Invoice.create!(customer_id: customer.id, status: 2)
+      invoice_item_1 = InvoiceItem.create!(invoice_id: invoice_1.id, item_id: item.id, quantity: 10, unit_price: 1000, status: 2)
+      invoice_item_2 = InvoiceItem.create!(invoice_id: invoice_1.id, item_id: item_2.id, quantity: 1, unit_price: 40, status: 1)
+      
+      expect(invoice_1.discounted_revenue).to eq(8040)
     end
   end
 end
