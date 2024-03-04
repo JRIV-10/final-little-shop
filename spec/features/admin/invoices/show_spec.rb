@@ -19,6 +19,7 @@ RSpec.describe "Admin Invoices Show", type: :feature do
       @invoice_item_2 = InvoiceItem.create!(item_id: @item_2.id, invoice_id: @invoice_1.id, quantity: 2, unit_price: 1000, status: 1) # packaged
       @invoice_item_3 = InvoiceItem.create!(item_id: @item_3.id, invoice_id: @invoice_1.id, quantity: 3, unit_price: 5000, status: 2) # shipped
 
+      @discount = @merchant_1.bulk_discounts.create!(discount: 20, quantity: 3)
       visit admin_invoice_path(@invoice_1)
     end
 
@@ -81,6 +82,18 @@ RSpec.describe "Admin Invoices Show", type: :feature do
 
         expect(current_path).to eq(admin_invoice_path(@invoice_1))
         expect(page.find_field("Status").value).to eq("In Progress")
+      end
+
+      describe "US-8 Admin Invoice Show Page: Total Revenue and Discounted Revenue" do 
+        it "" do 
+          # When I visit an admin invoice show page
+          # Then I see the total revenue from this invoice (not including discounts)
+          expect(page).to have_content("Total Revenue: $195.00")
+    
+          # And I see the total discounted revenue from this invoice which includes bulk discounts in the calculation
+          expect(page).to have_content("Discounted Revenue: $165.00")
+
+        end
       end
     end
   end
