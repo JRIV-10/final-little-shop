@@ -144,4 +144,35 @@ RSpec.describe 'Merchant Invoices Show Page', type: :feature do
       expect(page).to have_content("Discounted Revenue: $93")
     end
   end
+
+  describe "US-7 Merchant Invoice Show Page: Link to applied discounts" do
+    it "has links to bulk discount that was applied" do 
+      yain = Customer.create!(first_name: "Yain", last_name: "Porter")
+      abdul = Customer.create!(first_name: "Abdul", last_name: "R")
+
+      merchant = Merchant.create!(name: "Barry")
+      item_1 = create(:item, name: "book", merchant: merchant)
+      item_2 = create(:item, name: "belt", merchant: merchant)
+      invoice_1 = Invoice.create!(customer_id: yain.id, status: 1, created_at: "2011-09-13")
+
+      invoice_item_1 = InvoiceItem.create!(item_id: item_1.id, invoice_id: invoice_1.id, quantity: 1, unit_price: 2500, status: 0) # pending
+      invoice_item_2 = InvoiceItem.create!(item_id: item_2.id, invoice_id: invoice_1.id, quantity: 2, unit_price: 1000, status: 1) # packaged
+      invoice_item_3 = InvoiceItem.create!(item_id: item_2.id, invoice_id: invoice_1.id, quantity: 6, unit_price: 1000, status: 1) # package
+
+      discount = merchant.bulk_discounts.create!(discount: 20, quantity: 5)
+      # When I visit my merchant invoice show page
+      visit merchant_invoice_path(merchant, invoice_1)
+      # Next to each invoice item I see a link to the show page for the bulk discount that was applied (if any)
+      within "#invoice_item-#{invoice_item_1.id}" do
+        expect(page).not_to have_content("Applied Discount")
+      end
+
+      within "#invoice_item-#{invoice_item_3.id}" do
+        expect(page).to have_link("Applied Discount")
+        click_on("Applied Discount")
+      end
+      
+      expect(current_path).to eq(merchant_bulk_discount_path(merchant, discount))
+    end
+  end
 end

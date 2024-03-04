@@ -11,6 +11,8 @@ RSpec.describe Invoice, type: :model do
     it {should have_many :invoice_items}
     it {should have_many :transactions}
     it {should have_many(:items).through(:invoice_items)}
+    it {should have_many(:merchants).through(:items)}
+    it {should have_many(:bulk_discounts).through(:merchants)}
   end
 
   describe "class methods" do
@@ -83,7 +85,21 @@ RSpec.describe Invoice, type: :model do
         expect(@invoice_1.total_revenue).to eq(19500)
       end
     end
+  end
 
+  describe "#format_discount_revenue" do 
+    it "formats the revenue" do 
+      merchant = Merchant.create!(name: "This sucks")
+      discount = merchant.bulk_discounts.create!(discount: 20, quantity: 10)
+      item = Item.create!(name: "Hope this works", description: "My brain does not work", unit_price: 1000, merchant_id: merchant.id, status: 1)
+      item_2 = Item.create!(name: "Happy thoughts", description: "High Hopes", unit_price: 40, merchant_id: merchant.id)
+      customer = Customer.create!(first_name: 'Please', last_name: 'Work')
+      invoice_1 = Invoice.create!(customer_id: customer.id, status: 2)
+      invoice_item_1 = InvoiceItem.create!(invoice_id: invoice_1.id, item_id: item.id, quantity: 10, unit_price: 1000, status: 2)
+      invoice_item_2 = InvoiceItem.create!(invoice_id: invoice_1.id, item_id: item_2.id, quantity: 1, unit_price: 40, status: 1)
+
+      expect(invoice_1.format_discount_revenue).to eq("$80.40")
+    end
   end
 
   describe "#discounted_revenue" do 
