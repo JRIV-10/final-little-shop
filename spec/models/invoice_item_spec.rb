@@ -24,14 +24,22 @@ RSpec.describe InvoiceItem, type: :model do
     @customer_1 = create(:customer)
     @invoice_1 = create(:invoice, customer: @customer_1)
     @invoice_2 = create(:invoice, customer: @customer_1)
-    @invoice_item_1 = create(:invoice_item, item: @item_1, invoice: @invoice_1, unit_price: 500)
-    @invoice_item_2 = create(:invoice_item, item: @item_2, invoice: @invoice_2, unit_price: 1027)
+    @invoice_item_1 = create(:invoice_item, item: @item_1, invoice: @invoice_1, unit_price: 500, quantity: 10)
+    @invoice_item_2 = create(:invoice_item, item: @item_2, invoice: @invoice_2, unit_price: 1027, quantity: 2)
+    @discount = @merchant_1.bulk_discounts.create!(discount: 20, quantity: 10)
   end
 
   describe "instance methods" do
     it "formats unit_price sold at" do
       expect(@invoice_item_1.format_unit_price).to eq("$5.00")
       expect(@invoice_item_2.format_unit_price).to eq("$10.27")
+    end
+
+    describe "#bulk_discount" do 
+      it "finds if a discount is applied" do 
+        expect(@invoice_item_1.bulk_discount).to eq(@discount)
+        expect(@invoice_item_2.bulk_discount).not_to eq(@discount)
+      end
     end
   end
 end
