@@ -85,14 +85,13 @@ RSpec.describe "Admin Invoices Show", type: :feature do
       end
 
       describe "US-8 Admin Invoice Show Page: Total Revenue and Discounted Revenue" do 
-        it "" do 
+        it "displays discounted revenue" do 
           # When I visit an admin invoice show page
           # Then I see the total revenue from this invoice (not including discounts)
           expect(page).to have_content("Total Revenue: $195.00")
     
           # And I see the total discounted revenue from this invoice which includes bulk discounts in the calculation
           expect(page).to have_content("Discounted Revenue: $165.00")
-
         end
       end
     end

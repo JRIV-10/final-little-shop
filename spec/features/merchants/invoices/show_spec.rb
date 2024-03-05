@@ -151,13 +151,17 @@ RSpec.describe 'Merchant Invoices Show Page', type: :feature do
       abdul = Customer.create!(first_name: "Abdul", last_name: "R")
 
       merchant = Merchant.create!(name: "Barry")
+      merchant_2 = Merchant.create!(name: "Larry")
+
       item_1 = create(:item, name: "book", merchant: merchant)
       item_2 = create(:item, name: "belt", merchant: merchant)
+      item_3 = create(:item, name: "tees", merchant: merchant_2)
       invoice_1 = Invoice.create!(customer_id: yain.id, status: 1, created_at: "2011-09-13")
 
       invoice_item_1 = InvoiceItem.create!(item_id: item_1.id, invoice_id: invoice_1.id, quantity: 1, unit_price: 2500, status: 0) # pending
       invoice_item_2 = InvoiceItem.create!(item_id: item_2.id, invoice_id: invoice_1.id, quantity: 2, unit_price: 1000, status: 1) # packaged
       invoice_item_3 = InvoiceItem.create!(item_id: item_2.id, invoice_id: invoice_1.id, quantity: 6, unit_price: 1000, status: 1) # package
+      invoice_item_4 = InvoiceItem.create!(item_id: item_3.id, invoice_id: invoice_1.id, quantity: 6, unit_price: 1000, status: 1) # package
 
       discount = merchant.bulk_discounts.create!(discount: 20, quantity: 5)
       # When I visit my merchant invoice show page
@@ -167,11 +171,16 @@ RSpec.describe 'Merchant Invoices Show Page', type: :feature do
         expect(page).not_to have_content("Applied Discount")
       end
 
+      #this item belongs to a different merchant 
+      within "#invoice_item-#{invoice_item_4.id}" do
+        expect(page).not_to have_content("Applied Discount")
+      end
+      
       within "#invoice_item-#{invoice_item_3.id}" do
         expect(page).to have_link("Applied Discount")
         click_on("Applied Discount")
       end
-      
+     
       expect(current_path).to eq(merchant_bulk_discount_path(merchant, discount))
     end
   end

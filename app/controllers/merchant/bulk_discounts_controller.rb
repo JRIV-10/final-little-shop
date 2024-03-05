@@ -20,7 +20,6 @@ class Merchant::BulkDiscountsController < ApplicationController
       redirect_to merchant_bulk_discounts_path(@merchant)
       flash[:notice] = "Succesfully Created a New Discount"
     else 
-      # require 'pry'; binding.pry
       redirect_to new_merchant_bulk_discount_path(@merchant)
       flash[:alert] = "Please fill in ALL required fields"
     end
